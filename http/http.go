@@ -14,6 +14,7 @@ import (
 	"github.com/mpolden/echoip/iputil"
 	"github.com/mpolden/echoip/iputil/geo"
 	"github.com/mpolden/echoip/useragent"
+	"github.com/rs/cors"
 
 	"math/big"
 	"net"
@@ -464,11 +465,13 @@ func (s *Server) Handler() http.Handler {
 		r.RoutePrefix("GET", "/debug/pprof/", wrapHandlerFunc(pprof.Index))
 	}
 
-	return r.Handler()
+	handler := cors.AllowAll().Handler(r.Handler())
+	return handler
 }
 
 func (s *Server) ListenAndServe(addr string) error {
-	return http.ListenAndServe(addr, s.Handler())
+	handler := cors.Default().Handler(s.Handler())
+	return http.ListenAndServe(addr, handler)
 }
 
 func formatCoordinate(c float64) string {
