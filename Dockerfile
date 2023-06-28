@@ -2,7 +2,7 @@ FROM golang:1.15-buster AS build
 WORKDIR /go/src/github.com/mpolden/echoip
 COPY . .
 
-ENV GO111MODULE=on CGO_ENABLED=0
+ENV GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 RUN make
 
 FROM scratch
